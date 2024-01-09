@@ -1,0 +1,9 @@
+{% extends "base.html" %} {% block content %}
+
+<h1 class="text-center my-3">Welcome to {{ user.username }}, profile page</h1>
+
+ <a href="{% url 'edit_profile' %}" class="btn btn-success ms-5">
+  Edit Profile</a
+
+
+ {% endblock %}

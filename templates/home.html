@@ -1,4 +1,23 @@
-{% extends 'base.html' %} { {% block content %}
-<h1>This is home page</h1>
+{% extends 'base.html' %} {% load static %} {% block content %}
+<div class="d-flex flex-warp col-12">
+  <div class="col-6">
+    <h1 class="text-center my-4">Welcome to Our Online library</h1>
+    <h4 class="text-center">
+      "Elibrary" redirects here. For the former online library eLibrary
+    </h4>
 
-{% endblock %} }
+    <p class="px-5">
+      The early history of digital libraries is not well documented, but several
+      key thinkers are connected to the emergence of the concept.[3]
+      Predecessors include Paul Otlet and Henri La Fontaine's Mundaneum, an
+      attempt begun in 1895 to gather and systematically catalogue the world's
+      knowledge, with the hope of bringing about world peace.[4] The visions of
+      the digital library were largely realized a century later during the great
+      expansion of the Internet.[5]
+    </p>
+  </div>
+  <div class="col-6 pe-5">
+    <img src="{% static 'library.png' %}" class="img-fluid mt-3 rounded" />
+  </div>
+</div>
+{% endblock %}
