@@ -1,9 +1,9 @@
 from django.urls import path
-from .views import  borrowing_history, book_details
+from .views import  book_details, borrow_book
 
 
 urlpatterns = [
-    path('borrowing-history/', borrowing_history, name='borrowing_history'),
-     path('book-details/<int:book_id>/', book_details, name='book_details'),
+    path('book-details/<int:book_id>/', book_details, name='book_details'),
+    path('borrow/<int:book_id>/', borrow_book, name='borrow_book'),
 
 ]

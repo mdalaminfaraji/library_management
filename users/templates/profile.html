@@ -2,8 +2,35 @@
 
 <h1 class="text-center my-3">Welcome to {{ user.username }}, profile page</h1>
 
- <a href="{% url 'edit_profile' %}" class="btn btn-success ms-5">
+<a href="{% url 'edit_profile' %}" class="btn btn-success ms-5">
   Edit Profile</a
+>
+<div class="container">
+  <h3 class="text-center mb-3">Borrowed Books List</h3>
+  {% if borrowed_books %}
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th scope="col">Book Title</th>
+        <th scope="col">Borrowed Price</th>
+        <th scope="col">Borrowing Date</th>
+        <th scope="col">Returned</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for borrowed_book in borrowed_books %}
+      <tr>
+        <td>{{ borrowed_book.book.title }}</td>
+        <td>{{ borrowed_book.book.borrowing_price }}</td>
+        <td>{{ borrowed_book.borrowing_date }}</td>
+        <td>{% if borrowed_book.returned %}Yes{% else %}No{% endif %}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p>No books borrowed yet.</p>
+  {% endif %}
+</div>
 
-
- {% endblock %}
+{% endblock %}

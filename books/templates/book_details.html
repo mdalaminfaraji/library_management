@@ -1,0 +1,34 @@
+{% extends "base.html" %} {% block content %} {% load crispy_forms_tags %}
+
+<div class="col-12 d-flex">
+  <div class="card m-2 col-6">
+    <img
+      src="{{book.image.url}}"
+      class="card-img-top img-fluid"
+      alt="Car image"
+      style="height: 650px"
+    />
+  </div>
+  <div class="card-body m-5 col-6">
+    <h5 class="card-title">Book Title :{{book.title}}</h5>
+
+    <p class="card-text">Borrowing Price :{{book.borrowing_price}}</p>
+    <p class="card-text">Category :{{book.category}}</p>
+    <p class="card-text">Description :{{book.description}}</p>
+
+    {% if request.user.is_authenticated %}
+    <p>Borrow Book {{deposit_amount}}</p>
+    {% if deposit_amount >= book.borrowing_price %}
+    <form method="post" action="{% url 'borrow_book' book.id %}">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-success">Borrow Now</button>
+    </form>
+    {% else %}
+    <p class="text-danger">Insufficient deposit amount to borrow this book.</p>
+    {% endif %}
+    <hr />
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}

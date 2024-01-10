@@ -5,6 +5,8 @@ from .models import  UserProfile
 from .forms import  UserRegistrationForm, ChangeUserData, DepositForm
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
+
+from books.models import BorrowedBook
 # Create your views here.
 from django.core.mail import  EmailMultiAlternatives
 from django.template.loader import render_to_string
@@ -15,15 +17,16 @@ def Register(request):
                 form=UserRegistrationForm(request.POST)
                 if form.is_valid():
                         user=form.save()
+                        UserProfile.objects.create(user=user)
                         login(request, user)
+                        
                         messages.success(request, 'Register successfully done')
                         return redirect("home")
         else:
                 form=UserRegistrationForm()
                 
         return render(request, "register.html", {"form":form, 'type':'Register'})
-def SignUP(request):
-        return render(request, "login.html")
+
 
 
 def SignUP(request):
@@ -47,7 +50,8 @@ def SignUP(request):
 
 @login_required
 def profile(request):
-        return render(request, 'profile.html', {"data":request.user})
+        borrowed_books = BorrowedBook.objects.filter(user=request.user)
+        return render(request, 'profile.html', {"data":request.user, "borrowed_books":borrowed_books})
 
 
 @login_required
@@ -97,4 +101,19 @@ def deposit_money(request):
 
     return render(request, 'deposit_money.html', {'form': form, 'user_profile': user_profile})
 
+
+def view_user_deposit(request):
+    user_profile = request.user.userprofile
+
+    # Access the deposit_amount
+    deposit_amount = request.user.userprofile.deposit_amount
+
+    return render(request, 'view_deposit.html', {'deposit_amount': deposit_amount})
+
+
+@login_required
+def borrowing_history(request):
+    borrowed_books = BorrowedBook.objects.filter(user=request.user)
+
+    return render(request, 'profile.html', {'borrowed_books': borrowed_books})
 
