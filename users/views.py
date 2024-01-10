@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, authenticate, logout
 from .models import  UserProfile
@@ -50,8 +50,9 @@ def SignUP(request):
 
 @login_required
 def profile(request):
+        userprofile = UserProfile.objects.get(user=request.user)
         borrowed_books = BorrowedBook.objects.filter(user=request.user)
-        return render(request, 'profile.html', {"data":request.user, "borrowed_books":borrowed_books})
+        return render(request, 'profile.html', {"data":request.user, "borrowed_books":borrowed_books, "userprofile":userprofile})
 
 
 @login_required
@@ -116,4 +117,27 @@ def borrowing_history(request):
     borrowed_books = BorrowedBook.objects.filter(user=request.user)
 
     return render(request, 'profile.html', {'borrowed_books': borrowed_books})
+
+@login_required
+def returnBook(request, book_id):
+    borrowed_book = get_object_or_404(BorrowedBook, user=request.user, book_id=book_id, returned=False)
+    book = borrowed_book.book
+
+    if request.method == 'POST':
+        # Process returning logic
+        borrowed_book.returned = True
+        borrowed_book.save()
+
+        user_profile = UserProfile.objects.get(user=request.user)
+        user_profile.deposit_amount += book.borrowing_price
+        user_profile.save()
+
+        messages.success(request, 'Return Book successfully done')
+
+        return redirect('profile')
+    else:
+        # Add a response for non-POST requests (e.g., redirect to another page)
+        return redirect('profile')
+
+    # return render(request, 'profile.html', {'book': book, 'borrowed_book': borrowed_book})
 

@@ -9,12 +9,14 @@ from django.template.loader import render_to_string
 
 def book_details(request, book_id):
         book = get_object_or_404(Book, pk=book_id)
+        reviews = BookReview.objects.filter(book=book)
+        print(request.user.id, book_id)
         if request.user.is_authenticated :
-                reviews = BookReview.objects.filter(book=book)
-                deposit_amount = request.user.userprofile.deposit_amount
-                return render(request, 'book_details.html', {'book': book, 'reviews': reviews, "deposit_amount":deposit_amount})
+                deposit_amount=request.user.userprofile.deposit_amount
+                user_borrowed_book = BorrowedBook.objects.filter(user_id=request.user.id, book_id=book_id, returned=False)
+                return render(request, 'book_details.html', {'book': book, 'reviews': reviews, 'deposit_amount':deposit_amount, 'user_borrowed_book': user_borrowed_book, 'form': BookReviewForm()})
         else:
-                return render(request, 'book_details.html', {'book': book})
+                return render(request, 'book_details.html', {'book': book, 'reviews': reviews})
                 
 
 def send_transaction_email(user, amount, current_amount, subject, template):
@@ -47,7 +49,6 @@ def borrow_book(request, book_id):
             messages.error(request, "Insufficient deposit amount to borrow the book.")
             return redirect('book_details', book_id=book_id)
     else:
-        # Handle GET request if needed
         pass
 
 @login_required
@@ -66,7 +67,9 @@ def return_book(request, book_id):
 def review_book(request, book_id):
     book = Book.objects.get(pk=book_id)
     form = BookReviewForm()
-
+    reviews = BookReview.objects.filter(book=book)
+    deposit_amount=request.user.userprofile.deposit_amount
+    user_borrowed_book = BorrowedBook.objects.filter(user_id=request.user.id, book_id=book_id, returned=False)
     if request.method == 'POST':
         form = BookReviewForm(request.POST)
         if form.is_valid():
@@ -75,8 +78,9 @@ def review_book(request, book_id):
             review.book = book
             review.save()
 
-            return redirect('book_list')
+            return render(request, 'book_details.html', {'book': book, 'reviews': reviews,'deposit_amount':deposit_amount,  'user_borrowed_book': user_borrowed_book, 'form': BookReviewForm()})
+        return render(request, 'book_details.html', {'book': book, 'reviews': reviews,'deposit_amount':deposit_amount,  'user_borrowed_book': user_borrowed_book, 'form': BookReviewForm()})
 
-    return render(request, 'review_book.html', {'book': book, 'form': form})
+#     return render(request, 'book_details.html', {'book': book, 'form': form})
 
 

@@ -1,6 +1,7 @@
 {% extends "base.html" %} {% block content %}
 
 <h1 class="text-center my-3">Welcome to {{ user.username }}, profile page</h1>
+<p class="text-center my-3">Deposit Amount: {{ userprofile.deposit_amount }}</p>
 
 <a href="{% url 'edit_profile' %}" class="btn btn-success ms-5">
   Edit Profile</a
@@ -15,6 +16,7 @@
         <th scope="col">Borrowed Price</th>
         <th scope="col">Borrowing Date</th>
         <th scope="col">Returned</th>
+        <th scope="col">Return Book</th>
       </tr>
     </thead>
     <tbody>
@@ -24,12 +26,22 @@
         <td>{{ borrowed_book.book.borrowing_price }}</td>
         <td>{{ borrowed_book.borrowing_date }}</td>
         <td>{% if borrowed_book.returned %}Yes{% else %}No{% endif %}</td>
+        <td>
+          <form
+            method="post"
+            action="{% url 'returnbook' book_id=borrowed_book.book.id %}"
+          >
+            {% csrf_token %}
+
+            <button type="submit" class="btn btn-success">Return</button>
+          </form>
+        </td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
   {% else %}
-  <p>No books borrowed yet.</p>
+  <h1 class="text-center my-3">No books borrowed yet.</h1>
   {% endif %}
 </div>
 

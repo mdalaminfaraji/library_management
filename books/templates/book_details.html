@@ -17,7 +17,7 @@
     <p class="card-text">Description :{{book.description}}</p>
 
     {% if request.user.is_authenticated %}
-    <p>Borrow Book {{deposit_amount}}</p>
+    <p></p>
     {% if deposit_amount >= book.borrowing_price %}
     <form method="post" action="{% url 'borrow_book' book.id %}">
       {% csrf_token %}
@@ -26,9 +26,36 @@
     {% else %}
     <p class="text-danger">Insufficient deposit amount to borrow this book.</p>
     {% endif %}
-    <hr />
+    <br />
     {% endif %}
   </div>
 </div>
 
+<div>
+  <h3>Reviews</h3>
+  {% if reviews %}
+  <ul>
+    {% for review in reviews %}
+    <li>
+      {{ review.user.username }} - {{ review.review }} - {{ review.created_at }}
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p>No reviews yet. Be the first to review!</p>
+  {% endif %}
+</div>
+<div>
+  {% if user.is_authenticated %} {% if user_borrowed_book %}
+  <h3>Write a Review</h3>
+  <form method="post" action="{% url 'review_book' book.id %}">
+    {% csrf_token %} {{ form.as_p }}
+    <input type="submit" value="Submit Review" />
+  </form>
+  {% else %}
+  <p>You can only review books that you have borrowed.</p>
+  {% endif %} {% else %}
+  <p>Login to submit a review.</p>
+  {% endif %}
+</div>
 {% endblock %}
