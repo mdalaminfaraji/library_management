@@ -2,11 +2,12 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, authenticate, logout
 from .models import  UserProfile
-from .forms import  UserRegistrationForm, ChangeUserData
+from .forms import  UserRegistrationForm, ChangeUserData, DepositForm
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
 # Create your views here.
-
+from django.core.mail import  EmailMultiAlternatives
+from django.template.loader import render_to_string
 
 
 def Register(request):
@@ -65,3 +66,35 @@ def edit_profile(request):
 def user_logout(request):
     logout(request)
     return redirect('login')
+
+
+def send_transaction_email(user, amount, subject, template):
+        message = render_to_string(template, {
+            'user' : user,
+            'amount' : amount,
+        })
+        send_email = EmailMultiAlternatives(subject, '', to=[user.email])
+        send_email.attach_alternative(message, "text/html")
+        send_email.send()
+
+@login_required
+def deposit_money(request):
+    user_profile = UserProfile.objects.get(user=request.user)
+
+    if request.method == 'POST':
+        form = DepositForm(request.POST)
+        if form.is_valid():
+            amount = form.cleaned_data['amount']
+            user_profile.deposit_amount += amount
+            user_profile.save()
+
+            # Send deposit success email to the user
+            send_transaction_email(request.user, amount, "Deposit Message", "deposit_email.html")
+            messages.success(request, f'{"{:,.2f}".format(float(amount))} was deposited to your account successfully')
+        
+    else:
+        form = DepositForm()
+
+    return render(request, 'deposit_money.html', {'form': form, 'user_profile': user_profile})
+
+

@@ -22,7 +22,9 @@ from .import views
 urlpatterns = [
     path('', views.home, name="home"),
     path('admin/', admin.site.urls),
-    path('user/', include("users.urls")),
+    path('users/', include("users.urls")),
+    path('books/', include("books.urls")),
+    path('category/<slug:category_slug>', views.home, name='category_wise_book')
 ]
 urlpatterns += static(settings.MEDIA_URL,
                           document_root=settings.MEDIA_ROOT)

@@ -15,3 +15,6 @@ class ChangeUserData(UserChangeForm):
     class Meta:
         model = User
         fields=['username','email' ]
+        
+class DepositForm(forms.Form):
+    amount = forms.DecimalField(label='Deposit Amount', max_digits=10, decimal_places=2)

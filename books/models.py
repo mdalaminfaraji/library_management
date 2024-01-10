@@ -13,14 +13,21 @@ class Book(models.Model):
     image = models.ImageField(upload_to='books/media/uploads/',blank=True, null=True)
     borrowing_price = models.DecimalField(max_digits=10, decimal_places=2)
     reviews = models.ManyToManyField(User, through='BookReview')
-    categories = models.ManyToManyField(Category)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
     def __str__(self):
-        return self.name
+        return self.title
 
 class BookReview(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     review = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+    
+class BorrowedBook(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    borrowing_date = models.DateTimeField(auto_now_add=True)
+    return_date = models.DateTimeField(null=True, blank=True)
+    returned = models.BooleanField(default=False)
     
 
