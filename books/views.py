@@ -69,7 +69,7 @@ def review_book(request, book_id):
     form = BookReviewForm()
     reviews = BookReview.objects.filter(book=book)
     deposit_amount=request.user.userprofile.deposit_amount
-    user_borrowed_book = BorrowedBook.objects.filter(user_id=request.user.id, book_id=book_id, returned=False)
+    user_borrowed_book = BorrowedBook.objects.filter(user_id=request.user.id, book_id=book_id)
     if request.method == 'POST':
         form = BookReviewForm(request.POST)
         if form.is_valid():

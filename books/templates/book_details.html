@@ -1,7 +1,7 @@
 {% extends "base.html" %} {% block content %} {% load crispy_forms_tags %}
 
-<div class="col-12 d-flex">
-  <div class="card m-2 col-6">
+<div class="col-12 d-flex container mt-5">
+  <div class="card mr-2 col-6 border-0">
     <img
       src="{{book.image.url}}"
       class="card-img-top img-fluid"
@@ -10,11 +10,19 @@
     />
   </div>
   <div class="card-body m-5 col-6">
-    <h5 class="card-title">Book Title :{{book.title}}</h5>
+    <h5 class="card-title py-1">
+      <span class="fw-bold">Book Title</span> : {{book.title}}
+    </h5>
 
-    <p class="card-text">Borrowing Price :{{book.borrowing_price}}</p>
-    <p class="card-text">Category :{{book.category}}</p>
-    <p class="card-text">Description :{{book.description}}</p>
+    <p class="card-text">
+      <span class="fw-bold">Borrowing Price</span> : {{book.borrowing_price}}
+    </p>
+    <p class="card-text">
+      <span class="fw-bold">Category</span> : {{book.category}}
+    </p>
+    <p class="card-text">
+      <span class="fw-bold">Description</span> : {{book.description}}
+    </p>
 
     {% if request.user.is_authenticated %}
     <p></p>
@@ -24,38 +32,46 @@
       <button type="submit" class="btn btn-success">Borrow Now</button>
     </form>
     {% else %}
-    <p class="text-danger">Insufficient deposit amount to borrow this book.</p>
+    <p class="text-danger border rounded p-2">
+      Insufficient deposit amount to borrow this book.
+    </p>
     {% endif %}
     <br />
     {% endif %}
+    <div>
+      <h3>Reviews:</h3>
+      {% if reviews %}
+      <ol>
+        {% for review in reviews %}
+        <li class="border rounded p-2 my-1">
+          <p>Reviewer Name: {{ review.user.username }}</p>
+          <p>Review: {{ review.review }}</p>
+          <p>Date: {{review.created_at}}</p>
+        </li>
+        {% endfor %}
+      </ol>
+      {% else %}
+      <p class="border rounded p-2">No reviews yet. Be the first to review!</p>
+      {% endif %}
+    </div>
+    <div>
+      {% if user.is_authenticated %} {% if user_borrowed_book %}
+      <h3>Write a Review:</h3>
+      <form method="post" action="{% url 'review_book' book.id %}">
+        {% csrf_token %} {{ form | crispy}}
+        <input class="btn btn-success" type="submit" value="Submit Review" />
+      </form>
+      {% else %}
+      <p class="border rounded p-2">
+        You can only review books that you have borrowed.
+      </p>
+      {% endif %} {% else %}
+      <p class="border rounded p-2">
+        Login and borrow then you submit a review.
+      </p>
+      {% endif %}
+    </div>
   </div>
 </div>
 
-<div>
-  <h3>Reviews</h3>
-  {% if reviews %}
-  <ul>
-    {% for review in reviews %}
-    <li>
-      {{ review.user.username }} - {{ review.review }} - {{ review.created_at }}
-    </li>
-    {% endfor %}
-  </ul>
-  {% else %}
-  <p>No reviews yet. Be the first to review!</p>
-  {% endif %}
-</div>
-<div>
-  {% if user.is_authenticated %} {% if user_borrowed_book %}
-  <h3>Write a Review</h3>
-  <form method="post" action="{% url 'review_book' book.id %}">
-    {% csrf_token %} {{ form.as_p }}
-    <input type="submit" value="Submit Review" />
-  </form>
-  {% else %}
-  <p>You can only review books that you have borrowed.</p>
-  {% endif %} {% else %}
-  <p>Login to submit a review.</p>
-  {% endif %}
-</div>
 {% endblock %}

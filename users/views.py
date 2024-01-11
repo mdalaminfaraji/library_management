@@ -39,7 +39,7 @@ def SignUP(request):
             if user is not None:
                 messages.success(request, 'Login successfully done')
                 login(request, user)
-                return redirect('profile')
+                return redirect('home')
             else:
                 messages.warning(request, 'user do not find please  login')
                 return  redirect('register')
