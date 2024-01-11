@@ -139,5 +139,3 @@ def returnBook(request, book_id):
         # Add a response for non-POST requests (e.g., redirect to another page)
         return redirect('profile')
 
-    # return render(request, 'profile.html', {'book': book, 'borrowed_book': borrowed_book})
-
