@@ -29,8 +29,10 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
-
+# ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ['library-management-yn74.onrender.com', 'localhost']
+SECURE_SSL_REDIRECT = True
+USE_X_FORWARDED_HOST = True
 
 # Application definition
 
